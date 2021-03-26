@@ -1,0 +1,15 @@
+*
+
+!.gitignore
+!LICENSE
+!README.md
+!pyproject.toml
+
+!spectrominer/
+!spectrominer/**
+
+!tests/
+!tests/**
+
+*.pyc
+*.pyo

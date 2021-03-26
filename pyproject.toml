@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "spectrominer"
+version = "0.1.0"
+description = "A tool facilitating the interpretation of data resulting from analyzes made by a mass spectrometer in the context of biomedical analyzes."
+authors = ["Gabriel Couture <gacou54@gmail.com>"]
+license = "Apache License 2.0"
+
+[tool.poetry.dependencies]
+python = "^3.7"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
