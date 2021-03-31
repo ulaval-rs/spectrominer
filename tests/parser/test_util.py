@@ -2,7 +2,7 @@ from datetime import datetime
 
 import pytest
 
-from spectrominer.util import decode_date
+from spectrominer.parser.util import decode_date
 
 
 @pytest.mark.parametrize('date, expected', [

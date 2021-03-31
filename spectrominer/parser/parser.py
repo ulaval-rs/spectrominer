@@ -2,9 +2,9 @@ from typing import List
 
 import pandas
 
-from spectrominer.analysis import Analysis
-from spectrominer.molecule_results import MResult, MoleculeResults
-from spectrominer.util import decode_date
+from spectrominer.parser.analysis import Analysis
+from spectrominer.parser.molecule_results import MResult, MoleculeResults
+from spectrominer.parser.util import decode_date
 
 MOLECULES = [
     'Lactic',

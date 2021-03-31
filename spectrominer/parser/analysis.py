@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import List
 
-from spectrominer.molecule_results import MoleculeResults
+from spectrominer.parser.molecule_results import MoleculeResults
 
 
 @dataclass

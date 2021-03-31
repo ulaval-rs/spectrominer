@@ -3,9 +3,9 @@ from datetime import datetime
 import pandas
 import pytest
 
-from spectrominer.analysis import Analysis
-from spectrominer.molecule_results import MResult, MoleculeResults
-from spectrominer.parser import Parser
+from spectrominer.parser.analysis import Analysis
+from spectrominer.parser.molecule_results import MResult, MoleculeResults
+from spectrominer.parser.parser import Parser
 
 RAW_DATA_FILEPATH = './tests/data/raw.csv'
 
@@ -29,10 +29,6 @@ def test_parser():
 
 def test_get_analysis(parser: Parser):
     result = parser.get_analysis_list()
-    print()
-    print(result[0].results[0].m_results[0])
-    print(result[0].results[0])
-    print(result[0])
 
     assert type(result) == list
     assert type(result[0]) == Analysis
