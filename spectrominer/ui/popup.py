@@ -4,8 +4,8 @@ from tkinter import ttk
 
 class PopUp(tkinter.Toplevel):
 
-    def __init__(self, root: tkinter.Tk, message: str):
-        super(PopUp, self).__init__(root)
+    def __init__(self, message: str):
+        super(PopUp, self).__init__()
         self.geometry('400x300')
 
         self.wm_title('Message')

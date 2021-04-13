@@ -6,14 +6,6 @@ from spectrominer.parser.analysis import Analysis
 from spectrominer.parser.molecule_results import MResult, MoleculeResults
 from spectrominer.parser.util import decode_date
 
-MOLECULES = [
-    'Lactic',
-    'L-Alanine',
-    'L-Aspartic'
-    'Succinic',
-    'Fumaric',
-]
-
 
 class Parser:
 
