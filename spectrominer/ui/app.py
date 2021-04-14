@@ -11,7 +11,7 @@ class App(tkinter.Tk):
     def __init__(self):
         super().__init__()
 
-        self.geometry('800x600')
+        self.geometry('1400x900')
         self.winfo_toplevel().title('Spectrominer')  # Title
         MainFrame(self)
 
