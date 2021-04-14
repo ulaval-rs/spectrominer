@@ -1,5 +1,5 @@
 import tkinter
-from tkinter import ttk
+from tkinter import filedialog, ttk
 from typing import Optional
 
 from spectrominer.parser import Parser
@@ -20,6 +20,7 @@ class MainFrame(ttk.Frame):
         self.table = ttk.Treeview(self.root)
         self.scrollbar = ttk.Scrollbar()
         self._set_table()
+        self.btn_export = ttk.Button(self.root, text='Export data', command=self.export_data)
 
         # Frames
         FileSelectorFrame(self, width=760, height=90).place(x=320, y=20)
@@ -27,6 +28,7 @@ class MainFrame(ttk.Frame):
         # Layout
         ttk.Label(self.root, text='Molecule:').place(x=320, y=130)
         self.cb_molecule.place(x=400, y=125, width=200, height=25)
+        self.btn_export.place(x=1250, y=840, width=115, height=30)
 
     def molecule_has_been_selected(self, *_):
         analyzes = self.parser.get_analyzes_of_given_molecule(self.cb_molecule.get())
@@ -47,6 +49,19 @@ class MainFrame(ttk.Frame):
         for analysis in analyzes:
             values = [analysis.name] + [f'{r.istd_resp_ratio:e}' for r in analysis.results[0].m_results]
             self.table.insert('', 'end', values=values)
+
+    def export_data(self):
+        with filedialog.asksaveasfile(mode='w', title='Select file', defaultextension='.csv') as file:
+            analyzes = self.parser.get_analyzes_of_given_molecule(self.cb_molecule.get())
+            nbr_of_M = len(analyzes[0].results[0].m_results)
+            header = ['Analysis'] + [f'M+{i}' for i in range(nbr_of_M)]
+
+            file.write(','.join(header) + '\n')
+
+            for analysis in analyzes:
+                file.write(
+                    ','.join([analysis.name] + [str(r.istd_resp_ratio) for r in analysis.results[0].m_results]) + '\n'
+                )
 
     def _set_table(self):
         del self.scrollbar
