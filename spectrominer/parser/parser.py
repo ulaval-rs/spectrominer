@@ -17,7 +17,7 @@ class Parser:
             header=[0, 1]
         )
 
-    def get_analysis_list(self) -> List[Analysis]:
+    def get_analyzes(self) -> List[Analysis]:
         self._remove_empty_columns()
         self._fill_column_names()
 
@@ -37,13 +37,29 @@ class Parser:
 
         return analysis_list
 
-    def _get_molecules_results(self, row_index: int) -> List[MoleculeResults]:
-        molecules_results = []
-
+    def get_molecule_names(self) -> List[str]:
         # Multiple label and multiple molecules: set('Lactic acid M+1, Lactic acid M+2, ..., Malic acid M+0, ...)
         molecules_labels = set(column[0] for column in self.df.columns if 'Results' in column[0])
         # Multiple label per molecule set('Lactic acid M+1, Lactic acid M+2, ..., Malic acid M+0, ...)
-        molecule_names = set(label.split(' ')[0] for label in molecules_labels)
+        molecule_names = set(label.split('M+')[0].strip() for label in molecules_labels if 'M+' in label)
+
+        return list(molecule_names)
+
+    def get_analyzes_of_given_molecule(self, molecule_name: str) -> List[Analysis]:
+        analyzes_of_given_molecules = self.get_analyzes()
+
+        for analysis in analyzes_of_given_molecules:
+            analysis.results = [r for r in analysis.results if r.name == molecule_name]
+
+        return analyzes_of_given_molecules
+
+    def _get_molecules_results(self, row_index: int) -> List[MoleculeResults]:
+        molecules_results = []
+
+        molecule_names = self.get_molecule_names()
+
+        # Multiple label and multiple molecules: set('Lactic acid M+1, Lactic acid M+2, ..., Malic acid M+0, ...)
+        molecules_labels = set(column[0] for column in self.df.columns if 'Results' in column[0])
 
         for name in molecule_names:
             # Getting all labels with the molecule name

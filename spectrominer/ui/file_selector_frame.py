@@ -7,8 +7,8 @@ from spectrominer.ui.popup import PopUp
 
 class FileSelectorFrame(ttk.LabelFrame):
 
-    def __init__(self, parent: tkinter.Tk, **kw):
-        super().__init__(parent, text='Select file to parse', **kw)
+    def __init__(self, parent: ttk.Frame, **kw):
+        super().__init__(parent.master, text='Select file to parse', **kw)
         self.parent = parent
 
         # Widgets
@@ -18,7 +18,6 @@ class FileSelectorFrame(ttk.LabelFrame):
         self.btn_browse = ttk.Button(self, text='Browse', command=self.browse_file)
 
         # Layout
-        self.place(x=20, y=20)
         self.inline_filepath.place(x=20, y=25, width=500, height=30)
         ttk.Separator(self, orient='vertical').place(x=530, y=5, height=55)
         ttk.Label(self, text='Delimiter').place(x=540, y=5)
@@ -36,8 +35,11 @@ class FileSelectorFrame(ttk.LabelFrame):
             self.inline_filepath.delete(0, tkinter.END)
             self.inline_filepath.insert(0, filepath)
 
-            # TODO
-            analysis = self.parent.parser.get_analysis_list()
-            print(analysis)
+            molecule_names = self.parent.parser.get_molecule_names()
+            molecule_names.sort()
+
+            self.parent.cb_molecule.config(values=molecule_names)
+            self.parent.cb_molecule.current(0)
+            self.parent.molecule_has_been_selected()
         except Exception as e:
             PopUp(message=str(e))

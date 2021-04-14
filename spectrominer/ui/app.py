@@ -1,6 +1,9 @@
 import tkinter
+from typing import List, Optional
 
-from spectrominer.parser.main_frame import MainFrame
+from spectrominer.parser import Parser
+from spectrominer.parser.analysis import Analysis
+from spectrominer.ui.main_frame import MainFrame
 
 
 class App(tkinter.Tk):
