@@ -17,8 +17,9 @@ class MainFrame(ttk.Frame):
         # Widgets
         self.cb_molecule = ttk.Combobox(self.root, values=[], state='readonly')
         self.cb_molecule.bind('<<ComboboxSelected>>', self.molecule_has_been_selected)
-        self.table = ttk.Treeview(self.root, show='headings')
-        self._place_table()
+        self.table = ttk.Treeview(self.root)
+        self.scrollbar = ttk.Scrollbar()
+        self._set_table()
 
         # Frames
         FileSelectorFrame(self, width=760, height=90).place(x=320, y=20)
@@ -34,18 +35,24 @@ class MainFrame(ttk.Frame):
         # Setting columns
         del self.table
         self.table = ttk.Treeview(self.root, columns=list(range(nbr_of_M + 1)), show='headings')
-        self._place_table()
+        self._set_table()
 
         self.table.heading(0, text='Analysis')
         self.table.column(0, minwidth=80)
         for i in range(nbr_of_M):
             self.table.heading(i + 1, text=f'M+{i}')
-            self.table.column(i + 1, width=50)
+            self.table.column(i + 1, anchor='center', width=50)
 
         # Setting rows
         for analysis in analyzes:
             values = [analysis.name] + [f'{r.istd_resp_ratio:e}' for r in analysis.results[0].m_results]
             self.table.insert('', 'end', values=values)
 
-    def _place_table(self):
-        self.table.place(x=50, y=160, width=1300, height=380)
+    def _set_table(self):
+        del self.scrollbar
+        self.scrollbar = ttk.Scrollbar(self.root)
+        self.scrollbar.place(x=1350, y=160, width=20, height=660)
+        self.table.place(x=50, y=160, width=1300, height=660)
+
+        self.scrollbar.config(command=self.table.yview)
+        self.table.config(yscrollcommand=self.scrollbar.set)
