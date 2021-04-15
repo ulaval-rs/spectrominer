@@ -12,3 +12,6 @@ class Analysis:
     date: datetime
 
     results: List[MoleculeResults]
+
+    def __lt__(self, other: 'Analysis') -> bool:
+        return self.name < other.name

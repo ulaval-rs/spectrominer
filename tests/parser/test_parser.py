@@ -8,17 +8,16 @@ from spectrominer.parser.molecule_results import MResult, MoleculeResults
 from spectrominer.parser.parser import Parser
 
 RAW_DATA_FILEPATH = './tests/data/raw.csv'
-
 MOLECULE_NAME = 'Lactic acid'
 
 
 @pytest.fixture
 def parser():
-    return Parser(RAW_DATA_FILEPATH, delimiter=';')
+    return Parser(RAW_DATA_FILEPATH, delimiter=',')
 
 
 def test_parser():
-    result = Parser(RAW_DATA_FILEPATH, delimiter=';')
+    result = Parser(RAW_DATA_FILEPATH, delimiter=',')
 
     assert type(result.df) == pandas.DataFrame
     assert not result.df.empty
@@ -37,6 +36,7 @@ def test_get_analysis(parser: Parser):
     assert type(result[0].date) == datetime
     assert type(result[0].results[0]) == MoleculeResults
     assert type(result[0].results[0].m_results[0]) == MResult
+    assert result[0].results[0].m_results[0].istd_resp_ratio == .0001900789525851
 
 
 def test_get_molecule_names(parser: Parser):
@@ -56,6 +56,7 @@ def test_get_analyzes_of_given_molecule(parser: Parser):
     assert type(result[0].date) == datetime
     assert type(result[0].results[0]) == MoleculeResults
     assert type(result[0].results[0].m_results[0]) == MResult
+    assert result[0].results[0].m_results[0].istd_resp_ratio == 7.70882239116875
     for analysis in result:
         for molecule_result in analysis.results:
             assert molecule_result.name == MOLECULE_NAME

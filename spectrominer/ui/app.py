@@ -1,8 +1,5 @@
 import tkinter
-from typing import List, Optional
 
-from spectrominer.parser import Parser
-from spectrominer.parser.analysis import Analysis
 from spectrominer.ui.main_frame import MainFrame
 
 

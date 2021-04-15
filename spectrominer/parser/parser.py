@@ -35,6 +35,8 @@ class Parser:
                 )
             )
 
+        analysis_list.sort()
+
         return analysis_list
 
     def get_molecule_names(self) -> List[str]:
@@ -73,7 +75,7 @@ class Parser:
             m_results = []
 
             for label in molecule_labels:
-                m_number = int(label.split('M+')[1].split(' ')[0])  # Example of label: L-Pyroglutamic M+2 Results
+                m_number = int(label.split('M+')[1].split(' ')[0])  # Example of label: "L-Pyroglutamic M+2 Results"
 
                 m_results.append(
                     MResult(
@@ -84,7 +86,10 @@ class Parser:
                     )
                 )
 
+            m_results.sort()
             molecules_results.append(MoleculeResults(name=name, m_results=m_results))
+
+        molecules_results.sort()
 
         return molecules_results
 
