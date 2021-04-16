@@ -121,6 +121,9 @@ class MainFrame(ttk.Frame):
         self.scrollbar.config(command=self.table.yview)
         self.table.config(yscrollcommand=self.scrollbar.set)
 
+        # Actions on table
+        self.table.bind("<Delete>", self._delete_row)
+
     def _get_data(self) -> List[Analysis]:
         analyzes = self.parser.get_analyzes_of_given_molecule(self.cb_molecule.get())
 
@@ -132,3 +135,7 @@ class MainFrame(ttk.Frame):
             analysis.results = [apply_corrections(molecule_results) for molecule_results in analysis.results]
 
         return analyzes
+
+    def _delete_row(self, event):
+        for row in self.table.selection():
+            self.table.delete(row)
