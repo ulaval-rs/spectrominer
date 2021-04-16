@@ -10,7 +10,7 @@ def apply_corrections(molecule_results: MoleculeResults) -> MoleculeResults:
         # To get relative proportion
         m_result.istd_resp_ratio = m_result.istd_resp_ratio / sum_of_m_results
 
-        # Removing background noise
+        # TODO: Removing background noise
         m_result.istd_resp_ratio = m_result.istd_resp_ratio * 1
 
     return molecule_results

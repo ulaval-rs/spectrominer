@@ -2,6 +2,8 @@ import tkinter
 from tkinter import filedialog, ttk
 from typing import List, Optional
 
+import matplotlib.pyplot as plt
+
 from spectrominer.corrections import apply_corrections
 from spectrominer.parser import Parser
 from spectrominer.parser.analysis import Analysis
@@ -24,6 +26,8 @@ class MainFrame(ttk.Frame):
         self.table = ttk.Treeview(self.root)
         self.scrollbar = ttk.Scrollbar()
         self._set_table()
+        self.cb_m_value = ttk.Combobox(self.root, values=[], state='readonly')
+        self.btn_show_histogram = ttk.Button(self.root, text='Show histogram', command=self.show_histogram)
         self.btn_export = ttk.Button(self.root, text='Export data', command=self.export_data)
 
         # Frames
@@ -33,6 +37,8 @@ class MainFrame(ttk.Frame):
         ttk.Label(self.root, text='Molecule:').place(x=320, y=130)
         self.cb_molecule.place(x=400, y=125, width=200, height=25)
         self.btn_apply_corrections.place(x=880, y=125, width=200, height=25)
+        self.cb_m_value.place(x=50, y=840, width=115, height=30)
+        self.btn_show_histogram.place(x=200, y=840, width=115, height=30)
         self.btn_export.place(x=1250, y=840, width=115, height=30)
 
     def molecule_has_been_selected(self, *_):
@@ -55,6 +61,10 @@ class MainFrame(ttk.Frame):
             values = [analysis.name] + [f'{r.istd_resp_ratio:e}' for r in analysis.results[0].m_results]
             self.table.insert('', 'end', values=values)
 
+        # Showing available M values that can be plot
+        self.cb_m_value.config(values=[f'M+{i}' for i in range(nbr_of_M)])
+        self.cb_m_value.current(0)
+
     def apply_corrections(self):
         if not self.correction_applied:
             self.correction_applied = True
@@ -67,6 +77,27 @@ class MainFrame(ttk.Frame):
         # Reloading data
         if self.cb_molecule.get() != '':
             self.molecule_has_been_selected()
+
+    def show_histogram(self):
+        analyzes = self._get_data()
+        molecule_name = f'{analyzes[0].results[0].name} {self.cb_m_value.get()}'
+        analysis_names, analysis_results = [], []
+
+        for analysis in analyzes:
+            for m_result in analysis.results[0].m_results:
+                if f'M+{m_result.m_number}' == self.cb_m_value.get():
+                    analysis_names.append(analysis.name)
+                    analysis_results.append(m_result.istd_resp_ratio)
+                    continue
+
+        fig = plt.figure(figsize=(12, 8))
+        ax = fig.add_subplot(111)
+        ax.bar(analysis_names, analysis_results)
+        ax.set_xticklabels(analysis_names, rotation=45, ha='right')
+
+        plt.title(molecule_name)
+        plt.tight_layout()
+        plt.show()
 
     def export_data(self):
         with filedialog.asksaveasfile(mode='w', title='Select file', defaultextension='.csv') as file:
