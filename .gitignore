@@ -5,6 +5,9 @@
 !README.md
 !pyproject.toml
 
+!.github/
+!.github/**
+
 !spectrominer/
 !spectrominer/**
 
