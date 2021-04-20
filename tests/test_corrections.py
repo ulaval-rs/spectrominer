@@ -1,3 +1,5 @@
+import copy
+
 import pytest
 
 from spectrominer.corrections import apply_corrections
@@ -16,7 +18,7 @@ def molecule_results():
 
 
 def test_corrections(molecule_results: MoleculeResults):
-    result = apply_corrections(molecule_results)
+    result = apply_corrections(copy.deepcopy(molecule_results))
 
     assert type(result) == MoleculeResults
     assert molecule_results.m_results[0].istd_resp_ratio != result.m_results[0].istd_resp_ratio
