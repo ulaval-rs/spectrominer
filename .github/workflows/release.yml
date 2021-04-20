@@ -7,13 +7,10 @@ on:
 
 jobs:
   make_release:
-    name: Create release
     runs-on: ubuntu-latest
     outputs:
       upload_url: ${{ steps.step_upload_url.outputs.upload_url }}
     steps:
-      - id: step_upload_url
-        run: echo "::set-output name=upload_url::${{ steps.create_release.outputs.upload_url }}"
       - name: Release
         id: create_release
         uses: actions/create-release@v1
@@ -24,6 +21,8 @@ jobs:
           release_name: Release ${{ github.ref }}
           draft: true
           prerelease: false
+      - id: step_upload_url
+        run: echo "::set-output name=upload_url::${{ steps.create_release.outputs.upload_url }}"
 
   build_windows:
     runs-on: windows-latest
