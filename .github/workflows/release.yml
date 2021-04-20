@@ -59,7 +59,7 @@ jobs:
           poetry install
       - name: Build
         run: |
-          poetry run pyinstaller --onefile --noconsole --name spectrominer ./spectrominer/ui/app.py
+          poetry run pyinstaller --windowed --name spectrominer ./spectrominer/ui/app.py
       - name: Release
         id: create_release
         uses: actions/create-release@v1
