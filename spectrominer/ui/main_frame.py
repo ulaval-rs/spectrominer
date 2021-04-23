@@ -28,18 +28,28 @@ class MainFrame(ttk.Frame):
         self._set_table()
         self.cb_m_value = ttk.Combobox(self.root, values=[], state='readonly')
         self.btn_show_histogram = ttk.Button(self.root, text='Show histogram', command=self.show_histogram)
-        self.btn_export = ttk.Button(self.root, text='Export data', command=self.export_data)
+        self.btn_export = ttk.Button(
+            self.root,
+            text='Export metabolite data',
+            command=lambda: self.export_data(all_data=False)
+        )
+        self.btn_export_all = ttk.Button(
+            self.root,
+            text='Export all data',
+            command=lambda: self.export_data(all_data=True)
+        )
 
         # Frames
         FileSelectorFrame(self, width=760, height=90).place(x=320, y=20)
 
         # Layout
-        ttk.Label(self.root, text='Molecule:').place(x=320, y=130)
+        ttk.Label(self.root, text='Metabolite:').place(x=320, y=130)
         self.cb_molecule.place(x=400, y=125, width=200, height=25)
         self.btn_apply_corrections.place(x=880, y=125, width=200, height=25)
         self.cb_m_value.place(x=50, y=840, width=115, height=30)
         self.btn_show_histogram.place(x=200, y=840, width=115, height=30)
-        self.btn_export.place(x=1250, y=840, width=115, height=30)
+        self.btn_export.place(x=1050, y=840, width=180, height=30)
+        self.btn_export_all.place(x=1250, y=840, width=115, height=30)
 
     def molecule_has_been_selected(self, *_):
         analyzes = self._get_data()
@@ -99,18 +109,22 @@ class MainFrame(ttk.Frame):
         plt.tight_layout()
         plt.show()
 
-    def export_data(self):
+    def export_data(self, all_data: bool):
         with filedialog.asksaveasfile(mode='w', title='Select file', defaultextension='.csv') as file:
-            analyzes = self._get_data()
-            nbr_of_M = len(analyzes[0].results[0].m_results)
+            analyzes = self._get_data(all_data=all_data)
+            header: List[str] = ['Analysis']
+            rows: List[List[str]] = [[analysis.name] for analysis in analyzes]
 
-            header = ['Analysis'] + [f'M+{i}' for i in range(nbr_of_M)]
+            for molecule_result in analyzes[0].results:
+                header += [f'{molecule_result.name} M+{m_result.m_number}' for m_result in molecule_result.m_results]
+
+            for i, analysis in enumerate(analyzes):
+                for molecule_result in analysis.results:
+                    rows[i] += [str(r.istd_resp_ratio) for r in molecule_result.m_results]
+
             file.write(','.join(header) + '\n')
-
-            for analysis in analyzes:
-                file.write(
-                    ','.join([analysis.name] + [str(r.istd_resp_ratio) for r in analysis.results[0].m_results]) + '\n'
-                )
+            for row in rows:
+                file.write(','.join(row) + '\n')
 
     def _set_table(self):
         del self.scrollbar
@@ -124,8 +138,11 @@ class MainFrame(ttk.Frame):
         # Actions on table
         self.table.bind("<Delete>", self._delete_row)
 
-    def _get_data(self) -> List[Analysis]:
-        analyzes = self.parser.get_analyzes_of_given_molecule(self.cb_molecule.get())
+    def _get_data(self, all_data: bool = False) -> List[Analysis]:
+        if all_data:
+            analyzes = self.parser.get_analyzes()
+        else:
+            analyzes = self.parser.get_analyzes_of_given_molecule(self.cb_molecule.get())
 
         if not self.correction_applied:
             return analyzes
