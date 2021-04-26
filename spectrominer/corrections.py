@@ -1,6 +1,7 @@
 import copy
 from typing import List
 
+import numpy
 import pandas
 
 from spectrominer.errors import CorrectionMatrixNotFoundError
@@ -51,8 +52,13 @@ def _apply_correction_matrix(
         m_result.istd_resp_ratio = 0
 
         for i in range(nbr_of_M):
-            m_result.istd_resp_ratio += molecule_results_tmp.m_results[i].istd_resp_ratio * \
-                                        correction_matrix[i][m_result.m_number]
+            if not pandas.isna(molecule_results_tmp.m_results[i].istd_resp_ratio):
+                m_result.istd_resp_ratio += molecule_results_tmp.m_results[i].istd_resp_ratio * \
+                                            correction_matrix[i][m_result.m_number]
+    # Reapplying the nan
+    for m_result, m_result_tmp in zip(molecule_results.m_results, molecule_results_tmp.m_results):
+        if pandas.isna(m_result_tmp.istd_resp_ratio):
+            m_result.istd_resp_ratio = numpy.NAN
 
     return molecule_results
 
