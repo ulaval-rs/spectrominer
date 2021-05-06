@@ -5,10 +5,20 @@ import numpy
 import pandas
 
 from spectrominer.errors import CorrectionMatrixNotFoundError
+from spectrominer.parser.analysis import Analysis
 from spectrominer.parser.molecule_results import MoleculeResults
 
 
-def apply_corrections(molecule_results: MoleculeResults) -> MoleculeResults:
+def apply_theoretical_corrections(analyzes: List[Analysis]) -> List[Analysis]:
+    for analysis in analyzes:
+        analysis.results = [
+            _correct_molecule_results(molecule_results) for molecule_results in analysis.results
+        ]
+
+    return analyzes
+
+
+def _correct_molecule_results(molecule_results: MoleculeResults) -> MoleculeResults:
     # TODO: remove background noise
 
     # Normalization
@@ -21,13 +31,26 @@ def apply_corrections(molecule_results: MoleculeResults) -> MoleculeResults:
     correction_matrix = _find_correction_matrix(molecule_results.name)
     molecule_results = _apply_correction_matrix(correction_matrix, molecule_results)
 
-    # TODO
+    # TODO: validate what is happening here
     # Going back to absolute
+    new_sum_of_m_results = _sum_of_m_results(molecule_results)
     for m_result in molecule_results.m_results:
-        # To get relative ion amounts
-        m_result.istd_resp_ratio = m_result.istd_resp_ratio * sum_of_m_results
+        # Proportional distribution
+        m_result.istd_resp_ratio /= new_sum_of_m_results
 
-        # To get absolute proportion bg140
+        # To get relative ion amounts
+        # cg102 = Myristic ratio
+        # bg119 = Protein ratio
+        # bg104 = sum(values [M+0, M+1, ..., M+N] without background noise)
+        # bg123 = average(bg104 / (cg102 * bg119))
+        # bg140 = bg104 / (cg102 * bg119)
+        # bg157 = bg140 / bg123
+        # istd = istd * bg157
+        m_result.istd_resp_ratio *= sum_of_m_results
+
+        # To get absolute proportion
+        # istd = istd * bg140
+        m_result.istd_resp_ratio *= 1
 
     return molecule_results
 
@@ -75,7 +98,7 @@ def _find_correction_matrix(molecule_name: str) -> List[List[float]]:
             [0.0070255799, -0.0357412341, -0.143275149, 1.1714235469],
         ]
 
-    if ('pyruvate' in molecule_name):
+    if 'pyruvate' in molecule_name:
         return [
             [1.1714235469, 0, 0, 0],
             [-0.143275149, 1.1714235469, 0, 0],
