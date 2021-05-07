@@ -1,4 +1,5 @@
 import tkinter
+import traceback
 from tkinter import filedialog, ttk
 
 from spectrominer.parser import Parser
@@ -7,7 +8,7 @@ from spectrominer.ui.popup import PopUp
 
 class FileSelectorFrame(ttk.LabelFrame):
 
-    def __init__(self, parent: ttk.Frame, **kw):
+    def __init__(self, parent: 'MainFrame', **kw):
         super().__init__(parent.master, text='Select file to parse', **kw)
         self.parent = parent
 
@@ -41,5 +42,5 @@ class FileSelectorFrame(ttk.LabelFrame):
             self.parent.cb_molecule.config(values=molecule_names)
             self.parent.cb_molecule.current(0)
             self.parent.molecule_has_been_selected()
-        except Exception as e:
-            PopUp(message=str(e))
+        except Exception:
+            PopUp(message=traceback.format_exc())

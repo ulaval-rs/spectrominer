@@ -1,0 +1,2 @@
+class CorrectionMatrixNotFoundError(Exception):
+    pass

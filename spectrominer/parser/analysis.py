@@ -15,3 +15,10 @@ class Analysis:
 
     def __lt__(self, other: 'Analysis') -> bool:
         return self.name < other.name
+
+    def __getitem__(self, molecule_name: str) -> MoleculeResults:
+        for molecule_result in self.results:
+            if molecule_result.name == molecule_name:
+                return molecule_result
+
+        raise KeyError(molecule_name)

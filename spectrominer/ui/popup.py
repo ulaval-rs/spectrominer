@@ -1,17 +1,25 @@
 import tkinter
 from tkinter import ttk
+from tkinter.scrolledtext import ScrolledText
 
 
 class PopUp(tkinter.Toplevel):
 
     def __init__(self, message: str):
         super(PopUp, self).__init__()
-        self.geometry('400x300')
+        self.geometry('800x600')
 
         self.wm_title('Message')
 
-        label = ttk.Label(self, text=message, anchor=tkinter.N)
-        label.place(x=20, y=10, width=360, height=230)
-
         btn = ttk.Button(self, text='Ok', command=self.destroy)
-        btn.place(x=320, y=250, width=60, height=30)
+        btn.pack(anchor='e', side=tkinter.BOTTOM, padx=10, pady=10)
+
+        text_box = ScrolledText(
+            self,
+            width=360,
+            height=230,
+            wrap=tkinter.WORD
+        )
+        text_box.pack(padx=10, pady=10, fill=tkinter.BOTH, expand=True)
+        text_box.insert(tkinter.INSERT, message)
+        text_box.config(state='disabled')

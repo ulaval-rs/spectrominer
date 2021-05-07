@@ -22,3 +22,10 @@ class MoleculeResults:
 
     def __lt__(self, other: 'MoleculeResults') -> bool:
         return self.name < other.name
+
+    def __getitem__(self, m_number: int) -> MResult:
+        for m_result in self.m_results:
+            if m_result.m_number == m_number:
+                return m_result
+
+        raise KeyError(f'M_number {m_number} not found')
