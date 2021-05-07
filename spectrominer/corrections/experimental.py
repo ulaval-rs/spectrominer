@@ -7,7 +7,7 @@ from spectrominer.parser.analysis import Analysis
 
 def apply_experimental_corrections(analyzes: List[Analysis], control_analyzes: List[Analysis]) -> List[Analysis]:
     analyzes = _remove_control_analyzes_from_analyzes(analyzes, control_analyzes)
-    averaged_control_analysis = _average_control_analysis(control_analyzes)
+    averaged_control_analysis = _calculate_average_control_analysis(control_analyzes)
 
     for analysis in analyzes:
         for molecule_result, control_molecule_results in zip(analysis.results, averaged_control_analysis.results):
@@ -29,7 +29,7 @@ def _remove_control_analyzes_from_analyzes(
     return analyzes
 
 
-def _average_control_analysis(control_analyzes: List[Analysis]) -> Analysis:
+def _calculate_average_control_analysis(control_analyzes: List[Analysis]) -> Analysis:
     average_control_analysis = control_analyzes[0]
     average_control_analysis.name = 'Average control analysis'
 
