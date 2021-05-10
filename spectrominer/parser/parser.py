@@ -1,4 +1,5 @@
-from typing import List
+from datetime import datetime
+from typing import List, Optional, Tuple
 
 import pandas
 
@@ -29,8 +30,8 @@ class Parser:
             analysis_list.append(
                 Analysis(
                     index=index,
-                    name=row[('Sample', 'Name')],
-                    date=decode_date(row[('Sample', 'Acq. Date-Time')]),
+                    name=self._find_analysis_name(row),
+                    date=self._find_date(row),
                     results=molecules_results
                 )
             )
@@ -80,8 +81,8 @@ class Parser:
                 m_results.append(
                     MResult(
                         m_number=m_number,
-                        retention_time=float(self.df[(label, 'RT')].iloc[[row_index]]),
-                        area=float(self.df[(label, 'Area')].iloc[[row_index]]),
+                        retention_time=self._find_retention_time(label, row_index),
+                        area=self._find_area(label, row_index),
                         istd_resp_ratio=float(self.df[(label, 'ISTD Resp. Ratio')].iloc[[row_index]]),
                     )
                 )
@@ -92,6 +93,36 @@ class Parser:
         molecules_results.sort()
 
         return molecules_results
+
+    def _find_analysis_name(self, row: pandas.Series) -> str:
+        for column in row.index:
+            c1, c2 = column  # Column are tuple (2 lines/headers columns)
+
+            if c2.lower() == 'name':
+                return row[column]
+
+        raise ValueError('Column of the analyzes names not found')
+
+    def _find_date(self, row: pandas.Series) -> Optional[datetime]:
+        for column in row.index:
+            c1, c2 = column  # Column are tuple (2 lines/headers columns)
+
+            if 'date' in c2.lower():
+                return decode_date(row[column])
+
+        return None
+
+    def _find_retention_time(self, label: str, row_index: int) -> Optional[float]:
+        try:
+            float(self.df[(label, 'RT')].iloc[[row_index]])
+        except KeyError:
+            return None
+
+    def _find_area(self, label: str, row_index: int) -> Optional[float]:
+        try:
+            float(self.df[(label, 'Area')].iloc[[row_index]])
+        except KeyError:
+            return None
 
     def _fill_column_names(self) -> None:
         """

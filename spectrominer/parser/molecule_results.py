@@ -1,13 +1,13 @@
 from dataclasses import dataclass
-from typing import List
+from typing import List, Optional
 
 
 @dataclass
 class MResult:
     m_number: int
 
-    retention_time: float
-    area: float
+    retention_time: Optional[float]
+    area: Optional[float]
     istd_resp_ratio: float
 
     def __lt__(self, other: 'MResult') -> bool:

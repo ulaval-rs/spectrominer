@@ -8,7 +8,7 @@ from spectrominer.corrections.experimental import apply_experimental_corrections
 from spectrominer.parser import Parser
 from spectrominer.parser.analysis import Analysis
 
-RAW_DATA_FILEPATH = './tests/data/raw.csv'
+RAW_DATA_FILEPATH = './tests/data/raw-data-example-1.csv'
 
 
 @pytest.fixture

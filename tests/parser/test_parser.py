@@ -7,13 +7,8 @@ from spectrominer.parser.analysis import Analysis
 from spectrominer.parser.molecule_results import MResult, MoleculeResults
 from spectrominer.parser.parser import Parser
 
-RAW_DATA_FILEPATH = './tests/data/raw.csv'
+RAW_DATA_FILEPATH = './tests/data/raw-data-example-1.csv'
 MOLECULE_NAME = 'Lactic acid'
-
-
-@pytest.fixture
-def parser():
-    return Parser(RAW_DATA_FILEPATH, delimiter=',')
 
 
 def test_parser():
@@ -28,17 +23,22 @@ def test_parser():
     assert type(result.df[('Lactic acid M+0 Results', 'RT')]) == pandas.Series
 
 
-def test_get_analysis(parser: Parser):
+@pytest.mark.parametrize('parser, date_type, expected_istd_resp_ratio', [
+    (Parser('./tests/data/raw-data-example-1.csv', delimiter=','), datetime, .0001900789525851),
+    (Parser('./tests/data/raw-data-example-2.csv', delimiter=','), type(None), .0065320736927698),
+])
+def test_get_analysis(parser: Parser, date_type, expected_istd_resp_ratio):
     result = parser.get_analyzes()
 
     assert type(result) == list
     assert type(result[0]) == Analysis
-    assert type(result[0].date) == datetime
+    assert type(result[0].date) == date_type
     assert type(result[0].results[0]) == MoleculeResults
     assert type(result[0].results[0].m_results[0]) == MResult
-    assert result[0].results[0].m_results[0].istd_resp_ratio == .0001900789525851
+    assert result[0].results[0].m_results[0].istd_resp_ratio == expected_istd_resp_ratio
 
 
+@pytest.mark.parametrize('parser', [Parser('./tests/data/raw-data-example-1.csv', delimiter=',')])
 def test_get_molecule_names(parser: Parser):
     result = parser.get_molecule_names()
 
@@ -48,6 +48,7 @@ def test_get_molecule_names(parser: Parser):
     ].sort()
 
 
+@pytest.mark.parametrize('parser', [Parser('./tests/data/raw-data-example-1.csv', delimiter=',')])
 def test_get_analyzes_of_given_molecule(parser: Parser):
     result = parser.get_analyzes_of_given_molecule(MOLECULE_NAME)
 

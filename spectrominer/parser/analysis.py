@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 
 from spectrominer.parser.molecule_results import MoleculeResults
 
@@ -9,7 +9,7 @@ from spectrominer.parser.molecule_results import MoleculeResults
 class Analysis:
     index: int
     name: str
-    date: datetime
+    date: Optional[datetime]
 
     results: List[MoleculeResults]
 
