@@ -4,12 +4,15 @@ from typing import List
 import numpy
 import pandas
 
+from spectrominer.corrections.util import sum_m_results
 from spectrominer.errors import CorrectionMatrixNotFoundError
 from spectrominer.parser.analysis import Analysis
 from spectrominer.parser.molecule_results import MoleculeResults
 
 
 def apply_theoretical_corrections(analyzes: List[Analysis]) -> List[Analysis]:
+    raise NotImplementedError('Theoretical corrections have not yet been implemented')
+
     for analysis in analyzes:
         analysis.results = [
             _correct_molecule_results(molecule_results) for molecule_results in analysis.results
@@ -22,7 +25,7 @@ def _correct_molecule_results(molecule_results: MoleculeResults) -> MoleculeResu
     # TODO: remove background noise
 
     # Normalization
-    sum_of_m_results = _sum_of_m_results(molecule_results)
+    sum_of_m_results = sum_m_results(molecule_results)
     for m_result in molecule_results.m_results:
         # To get relative proportion
         m_result.istd_resp_ratio = m_result.istd_resp_ratio / sum_of_m_results
@@ -33,7 +36,7 @@ def _correct_molecule_results(molecule_results: MoleculeResults) -> MoleculeResu
 
     # TODO: validate what is happening here
     # Going back to absolute
-    new_sum_of_m_results = _sum_of_m_results(molecule_results)
+    new_sum_of_m_results = sum_m_results(molecule_results)
     for m_result in molecule_results.m_results:
         # Proportional distribution
         m_result.istd_resp_ratio /= new_sum_of_m_results
@@ -53,16 +56,6 @@ def _correct_molecule_results(molecule_results: MoleculeResults) -> MoleculeResu
         m_result.istd_resp_ratio *= 1
 
     return molecule_results
-
-
-def _sum_of_m_results(molecule_results: MoleculeResults) -> float:
-    sum_of_m_results = 0
-
-    for m_result in molecule_results.m_results:
-        if not pandas.isna(m_result.istd_resp_ratio):
-            sum_of_m_results += m_result.istd_resp_ratio
-
-    return sum_of_m_results
 
 
 def _apply_correction_matrix(

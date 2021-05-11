@@ -2,10 +2,14 @@ from typing import Dict, List
 
 import numpy
 
+from spectrominer.corrections.util import normalize_analyzes
 from spectrominer.parser.analysis import Analysis
 
 
 def apply_experimental_corrections(analyzes: List[Analysis], control_analyzes: List[Analysis]) -> List[Analysis]:
+    analyzes = normalize_analyzes(analyzes)
+    control_analyzes = normalize_analyzes(control_analyzes)
+
     analyzes = _remove_control_analyzes_from_analyzes(analyzes, control_analyzes)
     averaged_control_analysis = _calculate_average_control_analysis(control_analyzes)
 
