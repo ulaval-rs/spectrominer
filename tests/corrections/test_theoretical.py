@@ -19,13 +19,5 @@ def analyzes():
 
 
 def test_theoretical_corrections(analyzes: List[Analysis]):
-    result = apply_theoretical_corrections(copy.deepcopy(analyzes))
-
-    assert type(result) == list
-    assert type(result[0]) == Analysis
-    assert result[0].name == 'CW-387 milieu #1 Gluc C13'
-    assert result[0].results[0].name == 'Lactic acid'
-    assert result[0].results[0].m_results[0].m_number == 0
-    assert result[0].results[0].m_results[0].istd_resp_ratio == 7.867682981815292
-    assert analyzes[0].results[0].m_results[0].istd_resp_ratio != \
-           result[0].results[0].m_results[0].istd_resp_ratio
+    with pytest.raises(NotImplementedError):
+        apply_theoretical_corrections(analyzes)
