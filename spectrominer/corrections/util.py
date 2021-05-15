@@ -1,3 +1,4 @@
+import copy
 from typing import List
 
 import pandas
@@ -7,6 +8,8 @@ from spectrominer.parser.molecule_results import MoleculeResults
 
 
 def normalize_analyzes(analyzes: List[Analysis]) -> List[Analysis]:
+    analyzes = copy.deepcopy(analyzes)
+
     for analysis in analyzes:
         for molecule_results in analysis.results:
             sum_of_results = sum_m_results(molecule_results)
