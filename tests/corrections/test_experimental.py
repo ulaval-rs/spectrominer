@@ -6,7 +6,7 @@ import pytest
 from spectrominer.corrections.experimental import _calculate_average_control_analysis, \
     _convert_results_in_absolute, _find_number_of_values_per_m_result_per_molecule, \
     _remove_control_analyzes_from_analyzes, \
-    _remove_relative_abundance, apply_experimental_corrections
+    _remove_negative_values, _remove_relative_abundance, apply_experimental_corrections
 from spectrominer.corrections.util import normalize_analyzes
 from spectrominer.parser import Parser
 from spectrominer.parser.analysis import Analysis
@@ -60,8 +60,8 @@ def relative_analyzes(normalized_analyzes, normalized_averaged_control_analysis)
     return analyzes
 
 
-def test_experimental_corrections(analyzes: List[Analysis], control_analyzes: List[Analysis]):
-    result = apply_experimental_corrections(copy.deepcopy(analyzes), control_analyzes)
+def test_experimental_corrections_with_absolute_results(analyzes: List[Analysis], control_analyzes: List[Analysis]):
+    result = apply_experimental_corrections(copy.deepcopy(analyzes), control_analyzes, with_relative_results=False)
 
     assert type(result) == list
     assert type(result[0]) == Analysis
@@ -73,6 +73,19 @@ def test_experimental_corrections(analyzes: List[Analysis], control_analyzes: Li
     assert analyzes[0].results[0].m_results[0].istd_resp_ratio == result[0].results[0].m_results[0].istd_resp_ratio
     # Assert M+1 is lesser (because natural abundance has been removed)
     assert analyzes[0].results[0].m_results[1].istd_resp_ratio > result[0].results[0].m_results[1].istd_resp_ratio
+
+
+def test_experimental_corrections_with_relative_results(analyzes: List[Analysis], control_analyzes: List[Analysis]):
+    result = apply_experimental_corrections(copy.deepcopy(analyzes), control_analyzes, with_relative_results=True)
+
+    assert type(result) == list
+    assert type(result[0]) == Analysis
+    assert result[0].name == 'CW-387 organoides tube #10 Gluc C13'
+    assert result[0].results[0].name == 'Lactic acid'
+    for analysis in result:
+        for molecule_result in analysis.results:
+            for m_result in molecule_result.m_results:
+                assert m_result.istd_resp_ratio < 1
 
 
 def test_remove_control_analyzes_from_analyzes(analyzes: List[Analysis], control_analyzes: List[Analysis]):
@@ -126,3 +139,12 @@ def test_convert_results_in_absolute(relative_analyzes: List[Analysis], normaliz
     assert result[0].results[0].name == 'Lactic acid'
     # Result should not be normalized
     assert sum(m.istd_resp_ratio for m in result[0].results[0].m_results) != 1.0
+
+
+def test_remove_negative_values(analyzes: List[Analysis]):
+    result = _remove_negative_values(analyzes)
+
+    for analysis in result:
+        for molecule_result in analysis.results:
+            for m_result in molecule_result.m_results:
+                assert m_result.istd_resp_ratio > 0

@@ -41,6 +41,6 @@ class FileSelectorFrame(ttk.LabelFrame):
 
             self.parent.cb_molecule.config(values=molecule_names)
             self.parent.cb_molecule.current(0)
-            self.parent.molecule_has_been_selected()
+            self.parent.recalculate_results()
         except Exception:
             PopUp(message=traceback.format_exc())

@@ -21,10 +21,11 @@ class MainFrame(ttk.Frame):
         self.experimental_correction_applied: bool = False
         self.control_analyzes_indexes: List[int] = []
         self.theoretical_correction_applied: False = False
+        self.relative_result = tkinter.IntVar()
 
         # Widgets
         self.cb_molecule = ttk.Combobox(self.root, values=[], state='readonly')
-        self.cb_molecule.bind('<<ComboboxSelected>>', self.molecule_has_been_selected)
+        self.cb_molecule.bind('<<ComboboxSelected>>', self.recalculate_results)
         self.btn_apply_experimental_corrections = ttk.Button(
             self.root,
             text='Apply corrections with control measures',
@@ -52,6 +53,12 @@ class MainFrame(ttk.Frame):
         # Layout
         ttk.Label(self.root, text='Metabolite:').place(x=320, y=130)
         self.cb_molecule.place(x=400, y=125, width=200, height=25)
+        ttk.Checkbutton(
+            self.root,
+            text='Relative results',
+            variable=self.relative_result,
+            command=self.recalculate_results,
+        ).place(x=630, y=125, width=130, height=25)
         self.btn_apply_experimental_corrections.place(x=780, y=125, width=300, height=25)
         self.cb_m_value.place(x=50, y=840, width=115, height=30)
         self.btn_show_histogram.place(x=200, y=840, width=115, height=30)
@@ -69,7 +76,7 @@ class MainFrame(ttk.Frame):
 
         self.table.bind("<Delete>", self._delete_row)
 
-    def molecule_has_been_selected(self, *_):
+    def recalculate_results(self, *_):
         analyzes = self._get_analyzes()
         nbr_of_M = len(analyzes[0].results[0].m_results)
 
@@ -100,7 +107,7 @@ class MainFrame(ttk.Frame):
         else:
             self.experimental_correction_applied = False
             self.btn_apply_experimental_corrections.config(text='Apply corrections with control measures')
-            self.molecule_has_been_selected()
+            self.recalculate_results()
 
     def _export_data(self, all_data: bool):
         with filedialog.asksaveasfile(mode='w', title='Select file', defaultextension='.csv') as file:
@@ -127,7 +134,8 @@ class MainFrame(ttk.Frame):
 
         if self.experimental_correction_applied:
             control_analyzes = self._find_control_analyzes(analyzes)
-            analyzes = apply_experimental_corrections(analyzes, control_analyzes)
+            with_relative_results = bool(self.relative_result.get())
+            analyzes = apply_experimental_corrections(analyzes, control_analyzes, with_relative_results)
 
         elif self.theoretical_correction_applied:
             raise NotImplementedError('Theoretical corrections have not been implemented')

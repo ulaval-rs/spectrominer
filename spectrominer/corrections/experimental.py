@@ -7,7 +7,10 @@ from spectrominer.corrections.util import normalize_analyzes
 from spectrominer.parser.analysis import Analysis
 
 
-def apply_experimental_corrections(analyzes: List[Analysis], control_analyzes: List[Analysis]) -> List[Analysis]:
+def apply_experimental_corrections(
+        analyzes: List[Analysis],
+        control_analyzes: List[Analysis],
+        with_relative_results: bool) -> List[Analysis]:
     original_analyzes = copy.deepcopy(analyzes)
     analyzes = _remove_control_analyzes_from_analyzes(analyzes, control_analyzes)
 
@@ -21,9 +24,10 @@ def apply_experimental_corrections(analyzes: List[Analysis], control_analyzes: L
     analyzes = _remove_relative_abundance(normalized_analyzes, normalized_averaged_control_analysis)
 
     # Getting the absolute values of the presence of M+* results
-    analyzes = _convert_results_in_absolute(analyzes, normalized_analyzes, original_analyzes)
+    if with_relative_results:
+        return _remove_negative_values(analyzes)
 
-    return analyzes
+    return _convert_results_in_absolute(analyzes, normalized_analyzes, original_analyzes)
 
 
 def _remove_control_analyzes_from_analyzes(
@@ -140,5 +144,16 @@ def _convert_results_in_absolute(
 
                 else:
                     m_result.istd_resp_ratio = m_result.istd_resp_ratio * original_m_result.istd_resp_ratio / normalized_m_result.istd_resp_ratio
+
+    return analyzes
+
+
+def _remove_negative_values(analyzes: List[Analysis]) -> List[Analysis]:
+    # TODO: I'm not sure this is pertinent
+    for analysis in analyzes:
+        for molecule_result in analysis.results:
+            for m_result in molecule_result.m_results:
+                if m_result.istd_resp_ratio < 0:
+                    m_result.istd_resp_ratio = 0
 
     return analyzes

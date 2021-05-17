@@ -23,6 +23,7 @@ class CorrectionWizard(tkinter.Toplevel):
 
         btn_ok = ttk.Button(self, text='Ok', command=self.correction_done)
         btn_ok.place(x=680, y=540, width=100, height=30)
+        ttk.Checkbutton(self, text='Relative results', variable=self.parent.relative_result).place(x=540, y=540, width=125, height=30)
 
     def correction_done(self):
         self.parent.control_analyzes_indexes = []
@@ -41,7 +42,7 @@ class CorrectionWizard(tkinter.Toplevel):
 
         self.parent.experimental_correction_applied = True
         self.parent.btn_apply_experimental_corrections.config(text='Remove corrections with control measures')
-        self.parent.molecule_has_been_selected()
+        self.parent.recalculate_results()
 
         self.destroy()
 
