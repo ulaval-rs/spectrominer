@@ -1,9 +1,16 @@
 [tool.poetry]
 name = "spectrominer"
 version = "0.1.0"
-description = "A tool facilitating the interpretation of data resulting from analyzes made by a mass spectrometer in the context of biomedical analyzes."
+description = "Spectrominer is a software that allows you to apply corrections to mass spectrometry data."
 authors = ["Gabriel Couture <gacou54@gmail.com>"]
-license = "Apache License 2.0"
+readme = "README.md"
+license = " BSD-3-Clause"
+homepage = "https://github.com/ulaval-rs/spectrominer"
+repository = "https://github.com/ulaval-rs/spectrominer"
+keywords = ["isotope", "isotope correction"]
+
+[tool.poetry.scripts]
+spectrominer = "spectrominer.ui.app:start"
 
 [tool.poetry.dependencies]
 python = "^3.7.1"
