@@ -14,6 +14,9 @@ def normalize_analyzes(analyzes: List[Analysis]) -> List[Analysis]:
         for molecule_results in analysis.results:
             sum_of_results = sum_m_results(molecule_results)
 
+            if sum_of_results == 0:
+                continue
+
             for m_result in molecule_results.m_results:
                 m_result.istd_resp_ratio /= sum_of_results
 
