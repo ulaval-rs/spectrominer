@@ -13,6 +13,10 @@ class App(tkinter.Tk):
         MainFrame(self)
 
 
-if __name__ == '__main__':
+def start():
     app = App()
     app.mainloop()
+
+
+if __name__ == '__main__':
+    start()
