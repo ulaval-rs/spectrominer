@@ -61,7 +61,7 @@ class MainFrame(ttk.Frame):
         ).place(x=630, y=125, width=130, height=25)
         self.btn_apply_experimental_corrections.place(x=780, y=125, width=300, height=25)
         self.cb_m_value.place(x=50, y=840, width=115, height=30)
-        self.btn_show_histogram.place(x=200, y=840, width=115, height=30)
+        self.btn_show_histogram.place(x=200, y=840, width=150, height=30)
         self.btn_export.place(x=1050, y=840, width=180, height=30)
         self.btn_export_all.place(x=1250, y=840, width=115, height=30)
 
