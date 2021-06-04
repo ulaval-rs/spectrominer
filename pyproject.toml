@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "spectrominer"
-version = "0.0.2"
+version = "0.0.3"
 description = "Spectrominer is a software that allows you to apply corrections to mass spectrometry data."
 authors = ["Gabriel Couture <gacou54@gmail.com>"]
 readme = "README.md"
