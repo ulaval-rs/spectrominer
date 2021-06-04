@@ -11,21 +11,26 @@ RAW_DATA_FILEPATH = './tests/data/raw-data-example-1.csv'
 MOLECULE_NAME = 'Lactic acid'
 
 
-def test_parser():
-    result = Parser(RAW_DATA_FILEPATH, delimiter=',')
+@pytest.mark.parametrize('filepath', [
+    './tests/data/raw-data-example-1.csv',
+    './tests/data/raw-data-example-2.csv',
+    './tests/data/excel-data-example-1.xlsx',
+    './tests/data/excel-data-example-2.xlsx',
+])
+def test_parser(filepath):
+    result = Parser(filepath, delimiter=',')
 
     assert type(result.df) == pandas.DataFrame
     assert not result.df.empty
     # Asserting the column format
-    assert len(result.df.columns) == 248
     assert len(result.df.columns[0]) == 2
-    # Asserting that two-index column selection works
-    assert type(result.df[('Lactic acid M+0 Results', 'RT')]) == pandas.Series
 
 
 @pytest.mark.parametrize('parser, date_type, expected_istd_resp_ratio', [
     (Parser('./tests/data/raw-data-example-1.csv', delimiter=','), datetime, .0001900789525851),
     (Parser('./tests/data/raw-data-example-2.csv', delimiter=','), type(None), .0065320736927698),
+    (Parser('./tests/data/excel-data-example-1.xlsx', delimiter=','), datetime, .000190078952585119),
+    (Parser('./tests/data/excel-data-example-2.xlsx', delimiter=','), type(None), .0065320736927698),
 ])
 def test_get_analysis(parser: Parser, date_type, expected_istd_resp_ratio):
     result = parser.get_analyzes()

@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List, Optional, Tuple
+from typing import List, Optional
 
 import pandas
 
@@ -11,12 +11,21 @@ from spectrominer.parser.util import decode_date
 class Parser:
 
     def __init__(self, filepath: str, delimiter: str = ',', quotechar: str = '"') -> None:
-        self.df = pandas.read_csv(
-            filepath,
-            delimiter=delimiter,
-            quotechar=quotechar,
-            header=[0, 1]
-        )
+        if '.csv' in filepath.lower() or '.txt' in filepath.lower():
+            self.df = pandas.read_csv(
+                filepath,
+                delimiter=delimiter,
+                quotechar=quotechar,
+                header=[0, 1]
+            )
+        elif '.xlsx' in filepath.lower():
+            self.df = pandas.read_excel(
+                filepath,
+                header=[0, 1]
+            )
+
+        else:
+            raise ValueError('File should be a .csv, .txt or a .xlsx file.')
 
     def get_analyzes(self) -> List[Analysis]:
         self._remove_empty_columns()
