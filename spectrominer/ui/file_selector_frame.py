@@ -39,8 +39,16 @@ class FileSelectorFrame(ttk.LabelFrame):
             molecule_names = self.parent.parser.get_molecule_names()
             molecule_names.sort()
 
+            # Reinitialize settings
+            self.parent.relative_result.set(False)
+            self.parent.experimental_correction_applied = False
+            self.parent.btn_apply_experimental_corrections.config(text='Apply corrections with control measures')
+            self.parent.theoretical_correction_applied = False
+            self.parent.control_analyzes_indexes = []
+
             self.parent.cb_molecule.config(values=molecule_names)
             self.parent.cb_molecule.current(0)
             self.parent.recalculate_results()
+
         except Exception:
             PopUp(message=traceback.format_exc() + "\n\nCan't read the file.")

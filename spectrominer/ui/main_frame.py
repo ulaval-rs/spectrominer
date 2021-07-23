@@ -21,7 +21,7 @@ class MainFrame(ttk.Frame):
         self.parser: Optional[Parser] = None
         self.experimental_correction_applied: bool = False
         self.control_analyzes_indexes: List[int] = []
-        self.theoretical_correction_applied: False = False
+        self.theoretical_correction_applied: bool = False
         self.relative_result = tkinter.IntVar()
 
         # Widgets
