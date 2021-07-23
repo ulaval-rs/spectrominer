@@ -99,7 +99,7 @@ class MainFrame(ttk.Frame):
 
         # Setting rows
         for analysis in analyzes:
-            values = [analysis.name] + [f'{r.istd_resp_ratio:e}' for r in analysis.results[0].m_results]
+            values = [analysis.name] + [f'{r.istd_resp_ratio:.10f}' for r in analysis.results[0].m_results]
             self.table.insert('', 'end', values=values)
 
         # Showing available M values that can be plot
