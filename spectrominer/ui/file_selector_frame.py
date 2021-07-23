@@ -43,4 +43,4 @@ class FileSelectorFrame(ttk.LabelFrame):
             self.parent.cb_molecule.current(0)
             self.parent.recalculate_results()
         except Exception:
-            PopUp(message=traceback.format_exc())
+            PopUp(message=traceback.format_exc() + "\n\nCan't read the file.")

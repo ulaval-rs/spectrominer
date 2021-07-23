@@ -72,7 +72,7 @@ def _calculate_average_control_analysis(control_analyzes: List[Analysis]) -> Ana
             m_result.area = numpy.NaN
 
             if number_of_values_per_m_result_per_molecule[molecule_results.name][m_result.m_number] == 0:
-                raise ValueError(f'{molecule_results.name} M+{m_result.m_number} has no control values')
+                raise ValueError(f'{molecule_results.name} M+{m_result.m_number} has no control values. ')
 
             m_result.istd_resp_ratio /= number_of_values_per_m_result_per_molecule[
                 molecule_results.name][m_result.m_number]
