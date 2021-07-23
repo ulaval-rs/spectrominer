@@ -24,6 +24,8 @@ class MainFrame(ttk.Frame):
         self.theoretical_correction_applied: bool = False
         self.relative_result = tkinter.IntVar()
 
+        self.table_height = 500
+
         # Widgets
         self.cb_molecule = ttk.Combobox(self.root, values=[], state='readonly')
         self.cb_molecule.bind('<<ComboboxSelected>>', self.recalculate_results)
@@ -61,16 +63,16 @@ class MainFrame(ttk.Frame):
             command=self.recalculate_results,
         ).place(x=630, y=125, width=130, height=25)
         self.btn_apply_experimental_corrections.place(x=780, y=125, width=300, height=25)
-        self.cb_m_value.place(x=50, y=840, width=115, height=30)
-        self.btn_show_histogram.place(x=200, y=840, width=150, height=30)
-        self.btn_export.place(x=1050, y=840, width=180, height=30)
-        self.btn_export_all.place(x=1250, y=840, width=115, height=30)
+        self.cb_m_value.place(x=50, y=self.table_height+180, width=115, height=30)
+        self.btn_show_histogram.place(x=200, y=self.table_height+180, width=150, height=30)
+        self.btn_export.place(x=1050, y=self.table_height+180, width=180, height=30)
+        self.btn_export_all.place(x=1250, y=self.table_height+180, width=115, height=30)
 
     def _set_table(self):
         del self.scrollbar
         self.scrollbar = ttk.Scrollbar(self.root)
-        self.scrollbar.place(x=1350, y=160, width=20, height=660)
-        self.table.place(x=50, y=160, width=1300, height=660)
+        self.scrollbar.place(x=1350, y=160, width=20, height=self.table_height)
+        self.table.place(x=50, y=160, width=1300, height=self.table_height)
 
         self.scrollbar.config(command=self.table.yview)
         self.table.config(yscrollcommand=self.scrollbar.set)

@@ -8,9 +8,9 @@ class App(tkinter.Tk):
     def __init__(self):
         super().__init__()
 
-        self.geometry('1400x900')
         self.winfo_toplevel().title('Spectrominer')  # Title
-        MainFrame(self)
+        mainframe = MainFrame(self)
+        self.geometry(f'1400x{230 + mainframe.table_height}')
 
 
 def start():
