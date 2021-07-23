@@ -3,6 +3,7 @@ from tkinter import filedialog, ttk
 from typing import List, Optional
 
 import matplotlib.pyplot as plt
+from spectrominer.ui.popup import PopUp
 
 from spectrominer.corrections.experimental import apply_experimental_corrections
 from spectrominer.parser import Parser
@@ -77,7 +78,12 @@ class MainFrame(ttk.Frame):
         self.table.bind("<Delete>", self._delete_row)
 
     def recalculate_results(self, *_):
-        analyzes = self._get_analyzes()
+        try:
+            analyzes = self._get_analyzes()
+        except ValueError as err:
+            PopUp(str(err) + "Can't make corrections.")
+            return
+
         nbr_of_M = len(analyzes[0].results[0].m_results)
 
         # Setting columns
@@ -111,7 +117,11 @@ class MainFrame(ttk.Frame):
 
     def _export_data(self, all_data: bool):
         with filedialog.asksaveasfile(mode='w', title='Select file', defaultextension='.csv') as file:
-            analyzes = self._get_analyzes(all_data=all_data)
+            try:
+                analyzes = self._get_analyzes(all_data=all_data)
+            except ValueError as err:
+                PopUp(str(err) + "Can't export data.")
+                return
             header: List[str] = ['Analysis']
             rows: List[List[str]] = [[analysis.name] for analysis in analyzes]
 
@@ -135,6 +145,7 @@ class MainFrame(ttk.Frame):
         if self.experimental_correction_applied:
             control_analyzes = self._find_control_analyzes(analyzes)
             with_relative_results = bool(self.relative_result.get())
+
             analyzes = apply_experimental_corrections(analyzes, control_analyzes, with_relative_results)
 
         elif self.theoretical_correction_applied:
@@ -154,7 +165,11 @@ class MainFrame(ttk.Frame):
         return control_analyzes
 
     def _show_histogram(self):
-        analyzes = self._get_analyzes()
+        try:
+            analyzes = self._get_analyzes()
+        except ValueError as err:
+            PopUp(str(err) + "Can't show histogram")
+            return
         molecule_name = f'{analyzes[0].results[0].name} {self.cb_m_value.get()}'
         analysis_names, analysis_results = [], []
 
