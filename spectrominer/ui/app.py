@@ -3,7 +3,7 @@ import tkinter
 from spectrominer.ui.main_frame import MainFrame
 
 
-class App(tkinter.Tk):
+class GUIApp(tkinter.Tk):
 
     def __init__(self):
         super().__init__()
@@ -14,9 +14,5 @@ class App(tkinter.Tk):
 
 
 def start():
-    app = App()
+    app = GUIApp()
     app.mainloop()
-
-
-if __name__ == '__main__':
-    start()

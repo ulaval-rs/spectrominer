@@ -1,5 +1,6 @@
+import io
 from datetime import datetime
-from typing import List, Optional
+from typing import List, Optional, Union
 
 import pandas
 
@@ -10,22 +11,54 @@ from spectrominer.parser.util import decode_date
 
 class Parser:
 
-    def __init__(self, filepath: str, delimiter: str = ',', quotechar: str = '"') -> None:
-        if '.csv' in filepath.lower() or '.txt' in filepath.lower():
+    def __init__(
+            self,
+            filepath_or_buffer: Optional[Union[str, io.BytesIO]] = None,
+            delimiter: str = ',',
+            quotechar: str = '"',
+            content_type: Optional[str] = None) -> None:
+        self.df = pandas.DataFrame()
+
+        if filepath_or_buffer:
+            self.parse(filepath_or_buffer, delimiter, quotechar, content_type)
+
+
+    def parse(self, filepath_or_buffer: Union[str, io.BytesIO], delimiter: str = ',', quotechar: str = '"', content_type: Optional[str] = None) -> None:
+        is_csv, is_excel = False, False
+
+        if isinstance(filepath_or_buffer, str):
+            if '.csv' in filepath_or_buffer.lower() or '.txt' in filepath_or_buffer.lower():
+                is_csv = True
+
+            elif '.xlsx' in filepath_or_buffer.lower():
+                is_excel = True
+
+            else:
+                raise ValueError('File should be a .csv, .txt or a .xlsx file.')
+
+        elif isinstance(filepath_or_buffer, io.BytesIO) and content_type:
+            if 'csv' in content_type.lower() or '.txt' in content_type.lower():
+                is_csv = True
+
+            elif 'spreadsheet' in content_type.lower():
+                is_excel = True
+
+        if is_csv:
             self.df = pandas.read_csv(
-                filepath,
+                filepath_or_buffer,
                 delimiter=delimiter,
                 quotechar=quotechar,
                 header=[0, 1]
             )
-        elif '.xlsx' in filepath.lower():
+
+        elif is_excel:
             self.df = pandas.read_excel(
-                filepath,
+                filepath_or_buffer,
                 header=[0, 1]
             )
 
         else:
-            raise ValueError('File should be a .csv, .txt or a .xlsx file.')
+            raise ValueError(f'File type not found "{content_type}"')
 
     def get_analyzes(self) -> List[Analysis]:
         self._remove_empty_columns()
