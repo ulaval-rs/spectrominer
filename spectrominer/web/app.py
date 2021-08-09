@@ -33,17 +33,28 @@ def make_web_app() -> dash.Dash:
             html.H1('Spectrominer'),
             file_selector.html,
             html.Hr(),
-            html.Div([
-                core.Dropdown(
-                    id='cb-metabolite',
-                    placeholder='Select the metabolite...',
-                    clearable=False,
-                    style={
-                        'width': '50%',
-                        'margin': 'auto',
-                    }
-                ),
-            ]),
+            html.Div(
+                children=[
+                    core.Dropdown(
+                        id='cb-metabolite',
+                        placeholder='Select the metabolite...',
+                        clearable=False,
+                        className='six columns',
+                    ),
+                    html.Button(
+                        children=['Remove corrections'],
+                        id='btn-remove-corrections',
+                        className='six columns',
+                    )
+                ],
+                className='row',
+                style={
+                    'width': '80%',
+                    'margin': 'auto',
+                },
+
+            ),
+
             html.Br(),
             table.html,
         ],
@@ -63,6 +74,7 @@ def make_web_app() -> dash.Dash:
         Output('table', 'data'),
         Input('cb-metabolite', 'value'),
         Input('table', 'selected_rows'),
+        Input('table', 'data'),
     )(table.calculate_results)
 
     return app

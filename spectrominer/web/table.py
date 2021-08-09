@@ -22,7 +22,7 @@ class Table:
             style_data={'text-align': 'center'},
         )
 
-    def calculate_results(self, metabolite_name: str, selected_rows: List, all_data: bool = False) -> Tuple[List, List]:
+    def calculate_results(self, metabolite_name: str, selected_rows: List, table_data, all_data: bool = False) -> Tuple[List, List]:
         if self.parser.df.empty:
             return [], []
 
@@ -32,7 +32,7 @@ class Table:
             analyzes = self.parser.get_analyzes_of_given_molecule(metabolite_name)
 
         if selected_rows:
-            control_analyzes = self._find_control_analyzes(analyzes, [])
+            control_analyzes = self._find_control_analyzes(analyzes, selected_rows)
             with_relative_results = bool(False)  # TODO
 
             analyzes = apply_experimental_corrections(analyzes, control_analyzes, with_relative_results)
